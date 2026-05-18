@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Speed Battle</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="logo">⚡ Type Battle</div>
+    <div class="tagline">Race against time · Test your limits</div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('battle')"><span class="tab-icon">⚔️</span>Battle</button>
+    <button class="tab" onclick="switchTab('practice')"><span class="tab-icon">🎯</span>Practice</button>
+    <button class="tab" onclick="switchTab('leaderboard')"><span class="tab-icon">🏆</span>Leaderboard</button>
+    <button class="tab" onclick="switchTab('mystats')"><span class="tab-icon">📊</span>My Stats</button>
+    <button class="tab" onclick="switchTab('settings')"><span class="tab-icon">⚙️</span>Settings</button>
+  </div>
+
+  <!-- ═══ BATTLE TAB ═══ -->
+  <div id="tab-battle" class="tab-panel active">
+
+    <div class="stats-bar">
+      <div class="stat-card wpm">
+        <div class="stat-label">Speed</div>
+        <div class="stat-value" id="wpm-display">0</div>
+        <div class="stat-unit">WPM</div>
+      </div>
+      <div class="stat-card accuracy">
+        <div class="stat-label">Accuracy</div>
+        <div class="stat-value" id="acc-display">—</div>
+        <div class="stat-unit">%</div>
+      </div>
+      <div class="stat-card mistakes">
+        <div class="stat-label">Mistakes</div>
+        <div class="stat-value" id="err-display">0</div>
+        <div class="stat-unit">errors</div>
+      </div>
+    </div>
+
+    <div class="timer-row">
+      <div class="timer-display" id="timer-display">0:00</div>
+      <div class="timer-bar-wrap">
+        <div class="timer-bar" id="timer-bar"></div>
+      </div>
+      <div class="difficulty-badge diff-medium" id="diff-badge">Medium</div>
+    </div>
+
+    <div class="typing-box" id="typing-box" onclick="focusInput()">
+      <div class="passage-text" id="passage-text"></div>
+      <input type="text" class="hidden-input" id="hidden-input"
+             autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <div class="start-overlay" id="start-overlay" onclick="startTyping()">
+        <div class="start-prompt">Click to Start</div>
+        <div class="start-sub">Timer begins on first keystroke</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-primary" onclick="resetGame()">↺ New Text</button>
+      <button class="btn btn-ghost" onclick="resetGame(true)">⟳ Retry Same</button>
+      <div class="mode-pills">
+        <button class="mode-pill active" id="pill-30" onclick="setTime(30,this)">30s</button>
+        <button class="mode-pill" id="pill-60" onclick="setTime(60,this)">60s</button>
+        <button class="mode-pill" id="pill-90" onclick="setTime(90,this)">90s</button>
+        <button class="mode-pill" id="pill-0" onclick="setTime(0,this)">∞</button>
+      </div>
+    </div>
+
+    <div class="result-panel" id="result-panel">
+      <div class="result-label">Final Score</div>
+      <div class="result-wpm" id="res-wpm">0</div>
+      <div class="result-label">Words Per Minute</div>
+      <div class="rating" id="res-rating"></div>
+      <div class="result-grid">
+        <div class="result-item">
+          <div class="result-item-val" id="res-acc">—</div>
+          <div class="result-item-lbl">Accuracy</div>
+        </div>
+        <div class="result-item">
+          <div class="result-item-val" id="res-time">—</div>
+          <div class="result-item-lbl">Time</div>
+        </div>
+        <div class="result-item">
+          <div class="result-item-val" id="res-err">0</div>
+          <div class="result-item-lbl">Mistakes</div>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="resetGame()" style="margin-right:8px">Play Again</button>
+      <button class="btn btn-ghost" onclick="saveScore()">💾 Save Score</button>
+    </div>
+
+  </div>
+
+  <!-- ═══ PRACTICE TAB ═══ -->
+  <div id="tab-practice" class="tab-panel">
+    <div class="section-title">Practice Modes <span>Sharpen your skills</span></div>
+    <div class="practice-grid">
+      <div class="practice-card" onclick="loadPractice('numbers')">
+        <div class="practice-card-icon">🔢</div>
+        <div class="practice-card-title">Numbers & Symbols</div>
+        <div class="practice-card-desc">Practice typing numbers, punctuation and special characters with precision.</div>
+      </div>
+      <div class="practice-card" onclick="loadPractice('common')">
+        <div class="practice-card-icon">📝</div>
+        <div class="practice-card-title">Common Words</div>
+        <div class="practice-card-desc">Build speed with the 200 most commonly used English words.</div>
+      </div>
+      <div class="practice-card" onclick="loadPractice('code')">
+        <div class="practice-card-icon">💻</div>
+        <div class="practice-card-title">Code Snippets</div>
+        <div class="practice-card-desc">Type real code — functions, variables, brackets and logic.</div>
+      </div>
+      <div class="practice-card" onclick="loadPractice('quotes')">
+        <div class="practice-card-icon">💬</div>
+        <div class="practice-card-title">Famous Quotes</div>
+        <div class="practice-card-desc">Type inspiring quotes from philosophers, scientists, and leaders.</div>
+      </div>
+    </div>
+
+    <div class="keyboard-viz">
+      <div class="chart-title">Keyboard Heatmap · Worst keys based on your sessions</div>
+      <div id="keyboard-heatmap">
+        <div class="kb-row">
+          <div class="key">q</div><div class="key highlight">w</div><div class="key">e</div>
+          <div class="key">r</div><div class="key">t</div><div class="key">y</div>
+          <div class="key">u</div><div class="key">i</div><div class="key">o</div>
+          <div class="key highlight">p</div>
+        </div>
+        <div class="kb-row">
+          <div class="key">a</div><div class="key">s</div><div class="key">d</div>
+          <div class="key">f</div><div class="key">g</div><div class="key">h</div>
+          <div class="key">j</div><div class="key">k</div><div class="key">l</div>
+        </div>
+        <div class="kb-row">
+          <div class="key wider">shift</div>
+          <div class="key">z</div><div class="key highlight">x</div><div class="key">c</div>
+          <div class="key">v</div><div class="key">b</div><div class="key">n</div><div class="key">m</div>
+          <div class="key wider">shift</div>
+        </div>
+        <div class="kb-row">
+          <div class="key widest">space</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LEADERBOARD TAB ═══ -->
+  <div id="tab-leaderboard" class="tab-panel">
+    <div class="section-title">Hall of Speed <span>Top typists this week</span></div>
+    <div class="leaderboard-table">
+      <div class="lb-header">
+        <div>#</div><div>Player</div><div>WPM</div><div>Accuracy</div><div>Errors</div><div>Difficulty</div>
+      </div>
+      <div id="lb-body"></div>
+    </div>
+  </div>
+
+  <!-- ═══ MY STATS TAB ═══ -->
+  <div id="tab-mystats" class="tab-panel">
+    <div class="section-title">My Stats <span>Session overview</span></div>
+
+    <div class="stats-grid">
+      <div class="big-stat" data-icon="⚡" style="border-left:3px solid var(--accent2)">
+        <div class="big-stat-val" id="avg-wpm-stat" style="color:var(--accent2)">—</div>
+        <div class="big-stat-lbl">Average WPM</div>
+        <div class="big-stat-sub" id="avg-wpm-sub">Complete a test to see your stats</div>
+      </div>
+      <div class="big-stat" data-icon="🏆" style="border-left:3px solid var(--accent3)">
+        <div class="big-stat-val" id="best-wpm-stat" style="color:var(--accent3)">—</div>
+        <div class="big-stat-lbl">Best WPM</div>
+        <div class="big-stat-sub" id="best-wpm-sub">Personal record</div>
+      </div>
+      <div class="big-stat" data-icon="🎯" style="border-left:3px solid var(--accent4)">
+        <div class="big-stat-val" id="avg-acc-stat" style="color:var(--accent4)">—</div>
+        <div class="big-stat-lbl">Avg. Accuracy</div>
+        <div class="big-stat-sub" id="tests-count">0 tests completed</div>
+      </div>
+      <div class="big-stat" data-icon="❌" style="border-left:3px solid var(--accent)">
+        <div class="big-stat-val" id="total-err-stat" style="color:var(--accent)">0</div>
+        <div class="big-stat-lbl">Total Errors</div>
+        <div class="big-stat-sub">Across all sessions</div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-title">WPM History · Last 7 tests</div>
+      <div class="bar-chart" id="wpm-history-chart">
+        <div style="width:100%;padding:20px 0;text-align:center;color:var(--text-muted);font-size:0.8rem">
+          Complete tests to see your WPM history
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-title">Accuracy Breakdown</div>
+      <div class="progress-list">
+        <div class="progress-item">
+          <div class="progress-item-label"><span>Correct keystrokes</span><span id="pr-correct">—</span></div>
+          <div class="progress-track"><div class="progress-fill" id="pf-correct" style="width:0%;background:var(--accent2)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-item-label"><span>Incorrect keystrokes</span><span id="pr-wrong">—</span></div>
+          <div class="progress-track"><div class="progress-fill" id="pf-wrong" style="width:0%;background:var(--accent)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-item-label"><span>Accuracy rate</span><span id="pr-acc">—</span></div>
+          <div class="progress-track"><div class="progress-fill" id="pf-acc" style="width:0%;background:var(--accent4)"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SETTINGS TAB ═══ -->
+  <div id="tab-settings" class="tab-panel">
+    <div class="section-title">Settings <span>Customize your experience</span></div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">Gameplay</div>
+      <div class="settings-card">
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-name">Show live WPM</div>
+            <div class="setting-desc">Display WPM counter while typing</div>
+          </div>
+          <div class="toggle on" onclick="toggleSetting(this,'showWpm')"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-name">Stop on error</div>
+            <div class="setting-desc">Prevent moving forward until error is corrected</div>
+          </div>
+          <div class="toggle" onclick="toggleSetting(this,'stopOnError')"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-name">Sound effects</div>
+            <div class="setting-desc">Keystroke sounds and error beeps</div>
+          </div>
+          <div class="toggle" onclick="toggleSetting(this,'sound')"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-name">Show keyboard heatmap</div>
+            <div class="setting-desc">Track your weakest keys in Practice mode</div>
+          </div>
+          <div class="toggle on" onclick="toggleSetting(this,'heatmap')"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">Difficulty</div>
+      <div class="settings-card">
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-name">Text difficulty</div>
+            <div class="setting-desc">Controls word complexity and sentence length</div>
+          </div>
+          <div class="select-group">
+            <button class="sel-btn" id="diff-easy" onclick="setDifficulty('easy',this)">Easy</button>
+            <button class="sel-btn active" id="diff-medium" onclick="setDifficulty('medium',this)">Medium</button>
+            <button class="sel-btn" id="diff-hard" onclick="setDifficulty('hard',this)">Hard</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-name">Text category</div>
+            <div class="setting-desc">What type of text to use for tests</div>
+          </div>
+          <div class="select-group">
+            <button class="sel-btn active" id="cat-random" onclick="setCategory('random',this)">Random</button>
+            <button class="sel-btn" id="cat-quotes" onclick="setCategory('quotes',this)">Quotes</button>
+            <button class="sel-btn" id="cat-code" onclick="setCategory('code',this)">Code</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">Appearance</div>
+      <div class="settings-card">
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-name">Font size</div>
+            <div class="setting-desc">Passage text size</div>
+          </div>
+          <div class="select-group">
+            <button class="sel-btn" onclick="setFontSize('0.85rem',this)">S</button>
+            <button class="sel-btn active" onclick="setFontSize('1.05rem',this)">M</button>
+            <button class="sel-btn" onclick="setFontSize('1.25rem',this)">L</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-name">Smooth cursor</div>
+            <div class="setting-desc">Animated blinking cursor in text</div>
+          </div>
+          <div class="toggle on" onclick="toggleSetting(this,'smoothCursor')"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
