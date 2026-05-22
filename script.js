@@ -8,7 +8,7 @@ const PASSAGES = {
     "A big black bug bit a big black bear. Red lorry yellow lorry. Around the rugged rocks the ragged rascal ran.",
   ],
   medium: [
-    "The mind is not a vessel to be filled, but a fire to be kindled. Knowledge is power, and power comes from learning.",
+    "The mind is not a vessel to be filled, but a fire to be kindled. Knowledge is power, and Power comes from learning.",
     "In the beginning the Universe was created. This has made a lot of people very angry and been widely regarded as a bad move.",
     "Two roads diverged in a wood, and I took the one less traveled by. That has made all the difference in my journey.",
     "Not all those who wander are lost. The old that is strong does not wither. Deep roots are not reached by the frost.",
